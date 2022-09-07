@@ -1,0 +1,436 @@
+@charset "UTF-8";
+
+/* pipe
+----------------------------------------------- */
+.pipeTopDesc {
+	position: relative;
+	padding-bottom: 15px;
+}
+.pipeTopDesc .pipeTopDescImg{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+.pipeTopDesc .pipeTopDescEm{
+	border: solid 3px #0061d7;
+	margin-bottom: 10px;
+}
+.pipeTopDesc .pipeTopDescEm dt{
+	color: #fffc00;
+	font-size: 26px;
+	font-weight: bold;
+	background: #0061d7;
+	padding: 8px 15px;
+}
+.pipeTopDesc .pipeTopDescEm dd{
+	color: #0061d7;
+	font-size: 26px;
+	font-weight: bold;
+	padding: 8px 15px;
+}
+.pipeTopDesc p {
+	font-size: 15px;
+}
+.pipeTopColor{
+	border: solid 3px #0061d7;
+	padding: 15px 25px;
+	margin-bottom: 25px;
+}
+.pipeTopColor .colorTtl{
+	color: #0061d7;
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.pipeTopColor .inner {
+	font-size: 15px;
+}
+.pipeTopColor .inner .colorEm{
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.pipeTopColor .inner .colorList{
+	overflow:hidden;
+	margin-bottom: 10px;
+	list-style-type: none;
+}
+.pipeTopColor .inner .colorList li {
+	float: left;
+}
+.pipeTopColor .inner .colorList li .img{
+	margin-bottom: 5px;
+}
+.pipeTopColor .inner .colorList li .txt{
+	text-align: center;
+}
+.pipeTopColor .inner .colorList li .txt span{
+	color: #ee3333;
+}
+.pipeTopColor .inner .colorCaution{
+	color: #ee3333;
+}
+.pipeTopDiff{
+	margin-bottom: 25px;
+}
+.pipeTopDiff .diffTxt{
+	font-size: 15px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+.pipeTopDiff .diffImg{
+	overflow: hidden;
+}
+.pipeTopDiff .diffImg .diffImgL{
+	float: left;
+}
+.pipeTopDiff .diffImg .diffImgR{
+	float: right;
+}
+.pipeTopList {
+	margin-bottom: 30px;
+}
+.pipeTopList .pipeTopListIn{
+	overflow: hidden;
+	margin-bottom: 15px;
+}
+.pipeTopList .pipeListImg{
+	float: left;
+	width: 184px;
+}
+.pipeTopList .pipeListTxt{
+	float: right;
+	width: 460px;
+}
+.pipeTopList .pipeListTxt .ttl{
+	font-size: 20px;
+	font-weight: bold;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+.pipeTopList .pipeListTxt .txt{
+	font-size: 14px;
+}
+.pipeTopList.pipeType1 .pipeListTxt .ttl{
+	color: #1970c1;
+	background: #b2ddfe;
+}
+.pipeTopList.pipeType2 .pipeListTxt .ttl{
+	color: #1b8314;
+	background: #a5e0a1;
+}
+.pipeTopList.pipeType3 .pipeListTxt .ttl{
+	color: #df6900;
+	background: #fbc994;
+}
+
+.pipeTopList .pipeTopListBtn a{
+	display: block;
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+	padding: 10px 0 15px;
+}
+.pipeTopList .pipeTopListBtn a:hover{
+	text-decoration: none;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	-ms-filter: "alpha(opacity=70)"; /* IE 8 */
+}
+.pipeTopList.pipeType1 .pipeTopListBtn a{
+	color: #1970c1;
+	border: solid 3px #1970c1;
+	background: url("../pipe/img/arrow_type1.png") center 34px no-repeat;
+}
+.pipeTopList.pipeType2 .pipeTopListBtn a{
+	color: #1b8314;
+	border: solid 3px #1b8314;
+	background: url("../pipe/img/arrow_type2.png") center 34px no-repeat;
+}
+.pipeTopList.pipeType3 .pipeTopListBtn a{
+	color: #df6900;
+	border: solid 3px #df6900;
+	background: url("../pipe/img/arrow_type3.png") center 34px no-repeat;
+}
+
+.pipeTopNav {
+	margin-bottom: 20px;
+}
+.pipeTopNav li {
+	float: left;
+	width: 164px;
+	margin-right: 1px;
+}
+.pipeTopNav li a {
+	display: block;
+	font-size: 1em;
+	font-weight: bold;
+	padding: 18px 0;
+	text-align: center;
+	text-decoration: none;
+}
+.pipeTopNav li a:hover {
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	-ms-filter: "alpha(opacity=70)"; /* IE 8 */
+}
+.pipeTopNav li.nav_pipe1 a {
+	color: #1970c1;
+	background: url(../pipe/img/arrow_nav1.gif) center bottom no-repeat #b2ddfe;
+}
+.pipeTopNav li.nav_pipe2 a {
+	color: #1b8314;
+	background: url(../pipe/img/arrow_nav2.gif) center bottom no-repeat #a5e0a1;
+}
+
+.pipeSTtl{
+	color: #fff;
+	font-size: 1.3em;
+	padding: 5px 10px;
+	margin-bottom: 10px;
+}
+.pipeCont1 .pipeSTtl{
+	background: url(../bend/img/bg_blue.gif) 0 0 repeat;
+}
+.pipeCont2 .pipeSTtl{
+	background: url(../bend/img/bg_green.gif) 0 0 repeat;
+}
+
+.pipeTopPriceList {
+	margin-bottom: 20px;
+}
+.pipeTopPriceList .pipePlL {
+	float: left;
+	width: 180px;
+}
+.pipeTopPriceList .pipePlR {
+	float: right;
+	width: 470px;
+}
+.pipeTopPriceList .pipePlR .pipePlTtl{
+	height: 24px;
+	font-size: 1.1em;
+	padding: 4px 15px 0;
+}
+.pipeCont1 .pipeTopPriceList .pipePlR .pipePlTtl{
+	color: #1269ba;
+	background: url(../bend/img/bg_ttl_itazai_pl2.gif) 0 0 no-repeat;
+}
+.pipeCont2 .pipeTopPriceList .pipePlR .pipePlTtl{
+	color: #2c9524;
+	background: url(../bend/img/bg_ttl_itazai_pl1.gif) 0 0 no-repeat;
+}
+
+
+.pipeTopPriceList .pipePlR .pipePlList li {
+	border-bottom: solid 1px #bbb;
+	padding: 8px 0;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTblL {
+	float: left;
+	width: 220px;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTblR {
+	float: right;
+	width: 220px;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTbl{
+	margin-bottom: 10px;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTbl th,
+.pipeTopPriceList .pipePlR .pipePlSpecTbl td {
+	padding: 7px 8px 6px;
+	border-bottom: solid 1px #bbb;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTbl th {
+	width: 84px;
+	color: #787878;
+	font-weight: bold;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTbl td {
+	width: 104px;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTblFull {
+	width: 100%;
+}
+.pipeTopPriceList .pipePlR .pipePlSpecTblFull td{
+	width: auto;
+}
+.pipeTopPriceList .pipePlItemTbl,
+.pipeDetailItem .pipeDetailItemTbl {
+	width: 100%;
+	border-top: solid 1px #bbb;
+	border-left: solid 1px #bbb;
+}
+.pipeTopPriceList .pipePlItemTbl th,
+.pipeTopPriceList .pipePlItemTbl td,
+.pipeDetailItem .pipeDetailItemTbl th,
+.pipeDetailItem .pipeDetailItemTbl td {
+	border-right: solid 1px #bbb;
+	border-bottom: solid 1px #bbb;
+}
+.pipeTopPriceList .pipePlItemTbl th,
+.pipeDetailItem .pipeDetailItemTbl th {
+	text-align: center;
+	background: #eee;
+	padding: 6px;
+}
+.pipeTopPriceList .pipePlItemTbl td.color,
+.pipeTopPriceList .pipePlItemTbl td.length{
+	width: 100px;
+	text-align: center;
+}
+.pipeTopPriceList .pipePlItemTbl td.price{
+	width: 100px;
+	text-align: right;
+}
+
+.pipeTopPriceList .pipePlItemTbl td.size,
+.pipeTopPriceList .pipePlItemTbl td.color,
+.pipeTopPriceList .pipePlItemTbl td.length,
+.pipeTopPriceList .pipePlItemTbl td.price,
+.pipeDetailItem .pipeDetailItemTbl td.size,
+.pipeDetailItem .pipeDetailItemTbl td.color,
+.pipeDetailItem .pipeDetailItemTbl td.price {
+	padding: 6px 8px;
+}
+.pipeTopPriceList .pipePlItemTbl td.size,
+.pipeDetailItem .pipeDetailItemTbl td.size {
+	color: #173383;
+}
+.pipeTopPriceList .pipePlItemTbl td.price span,
+.pipeDetailItem .pipeDetailItemTbl td.price span {
+	color: #ee3333;
+	font-weight: bold;
+}
+.pipeTopPriceList .pipePlItemTbl td.btn,
+.pipeDetailItem .pipeDetailItemTbl td.btn {
+	width: 90px;
+	text-align: center;
+	vertical-align: middle;
+}
+.pipeDetailCont {
+	margin-bottom: 25px;
+}
+.pipeDetailCont .pipeDetailContL {
+	float: left;
+	width: 250px;
+}
+.pipeDetailCont .pipeDetailContL .pipeDetailImg{
+	margin-bottom: 5px;
+}
+.pipeDetailCont .pipeDetailContL .pipeDetailTxt a{
+	color: #00f;
+	font-weight: bold;
+}
+
+.pipeDetailCont .pipeDetailContL .small{
+	font-size: 12px;
+}
+.pipeDetailCont .pipeDetailContR {
+	float: right;
+	width: 390px;
+}
+.pipeDetailCont .pipeDetailSpecTbl {
+	margin-bottom: 10px;
+}
+.pipeDetailCont .pipeDetailSpecTblFull{
+	width: 100%;
+}
+.pipeDetailCont .pipeDetailSpecTblL {
+	float: left;
+	width: 180px;
+}
+.pipeDetailCont .pipeDetailSpecTblR {
+	float: right;
+	width: 180px;
+}
+.pipeDetailCont .pipeDetailSpecTbl th,
+.pipeDetailCont .pipeDetailSpecTbl td {
+	padding: 7px 0 6px;
+	border-bottom: solid 1px #bbb;
+}
+.pipeDetailCont .pipeDetailSpecTbl th {
+	width: 90px;
+	color: #787878;
+	font-weight: bold;
+}
+.pipeDetailCont .pipeDetailSpecTbl td {
+	width: 90px;
+}
+.pipeDetailCont .pipeDetailSpecTblFull{
+	width: 100%;
+}
+.pipeDetailCont .pipeDetailSpecTblFull td{
+	width: auto;
+}
+.pipeDetailCont .pipeDetailSelectTbl {
+	margin-bottom: 20px;
+}
+.pipeDetailCont .pipeDetailSelectTbl table {
+	width: 100%;
+	border-top: solid 1px #ccc;
+	border-left: solid 1px #ccc;
+}
+.pipeDetailCont .pipeDetailSelectTbl th,
+.pipeDetailCont .pipeDetailSelectTbl td {
+	border-right: solid 1px #ccc;
+	border-bottom: solid 1px #ccc;
+	padding: 10px;
+}
+.pipeDetailCont .pipeDetailSelectTbl th {
+	width: 80px;
+	font-weight: bold;
+	background: #eee;
+}
+.pipeDetailCont .pipeDetailPriceTbl {
+	margin-bottom: 10px;
+}
+.pipeDetailCont .pipeDetailPriceTbl table {
+	width: 100%;
+}
+.pipeDetailCont .pipeDetailPriceTbl th,
+.pipeDetailCont .pipeDetailPriceTbl td {
+	font-size: 1.1em;
+	font-weight: bold;
+	border-top: solid 3px #ccc;
+	border-bottom: solid 3px #ccc;
+}
+.pipeDetailCont .pipeDetailPriceTbl th {
+	width: 178px;
+	background: #eee;
+	border-left: solid 3px #ccc;
+	padding: 10px;
+}
+.pipeDetailCont .pipeDetailPriceTbl th span {
+	font-size: 0.8em;
+}
+.pipeDetailCont .pipeDetailPriceTbl td {
+	text-align: right;
+	border-left: solid 1px #ccc;
+	border-right: solid 3px #ccc;
+	padding:10px;
+}
+.pipeDetailEm li{
+	padding-left: 10px;
+	text-indent: -10px;
+}
+.pipeDetailEm li.em{
+	color: #ee3333;
+}
+.pipeDetailEm li.em a{
+	color: #ee3333;
+	font-weight: bold;
+}
+.pipeOrderTxt{
+	margin-top: 10px;
+}
+
+.pipeAttention {
+	color: #ee3333;
+	margin-top: 8px;
+}
+.pipeAttention a {
+	color: #ee3333;
+	font-weight: bold;
+}

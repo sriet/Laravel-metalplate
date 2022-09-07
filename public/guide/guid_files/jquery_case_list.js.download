@@ -1,0 +1,56 @@
+function chg_category(obj, kbn, cate, page, path) {
+	var ul = $(obj).closest('ul');
+	$(ul).find('a').removeClass('active');
+	$(obj).addClass('active');
+
+	create_case_list(kbn, cate, page, '', path);
+	return false;
+}
+
+function chg_sub_category(obj, kbn, cate, page, path) {
+	var sub_cate = $('#sub_category').children(':selected').val();
+	create_case_list(kbn, cate, page, sub_cate, path);
+	return false;
+}
+
+function create_case_list(kbn, cate, page, sub_cate, path) {
+	$.ajax({
+		type: "POST",
+		url: path + "vl-admin/ajax/create_site_case_list.php",
+		cache: false,
+		data: {
+			kbn: kbn,
+			category: cate,
+			category2: sub_cate,
+			page: page
+		},
+		success: function(html){
+				$('.caseList').html(html);
+				heightLine();
+				return false;
+		}
+	});
+}
+
+$(function(){
+	$(".caseSearchContSub :checkbox").change(function () {
+		if($(this).is(':checked')) {
+			$(this).next("label").addClass("active");
+		} else {
+			$(this).next("label").removeClass("active");
+		}
+	});
+	$(".caseSearchContSub :radio").change(function () {
+		$(this).closest('dd').find("label").removeClass("active");
+		if($(this).is(':checked')) {
+			$(this).next("label").addClass("active");
+			$('.search').submit();
+		}
+	});
+	
+	$(".caseSearchContSub :checkbox, .caseSearchContSub :radio").each(function(){
+		if($(this).is(':checked')) {
+			$(this).next("label").addClass("active");
+		}
+	});
+});

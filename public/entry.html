@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)https://localhost:8000/movie/entry.html?v=gicgkJ5TE4w -->
+<html lang="ja">
+ <head>
+ 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>加工チャンネル動画 板曲げ.com アルミ/ステンレス/鉄の加工と販売</title>
+       <link rel="stylesheet" href="../guide/references_files/import.css">
+
+<link rel="apple-touch-icon" href="https://localhost:8000/themes/itamage/apple-touch-icon-precomposed.png">
+<link rel="shortcut icon" href="https://localhost:8000/themes/itamage/common_img/favicon.ico">
+<script type="text/javascript" src="../guide/references_files/jquery-1.9.1.min.js.download"></script>
+<script type="text/javascript" src="../guide/references_files/heightLine.js.download"></script>
+<script type="text/javascript" src="../guide/references_files/jquery.biggerlink.js.download"></script>
+<script type="text/javascript" src="../guide/references_files/jQueryAutoHeight.js.download"></script>
+<script>
+$(function(){
+	var display = function(){
+		if($(this).scrollTop() > 100) {
+			$("#sideInfo").fadeIn();
+        } else {
+			$("#sideInfo").fadeOut();
+		}
+	};
+    $(window).on("scroll", display);
+	$('#sideInfo .close').click(function(){
+		$('#sideInfo').fadeOut();
+		$(window).off("scroll", display);
+	});
+});
+</script>
+<link rel="stylesheet" href="../guide/references_files/movie.css">
+<script>
+$(function(){
+	var url   = 'https://www.youtube.com/embed/' + getParam('v') + '?rel=0';
+	$('#frame').attr('src', url);
+});
+function getParam(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+</script>
+</head>
+<body>
+	<div id="container">
+		<div id="youtube">
+			<iframe id="frame" width="560" height="315" src="../guide/references_files/gicgkJ5TE4w.html" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+		</div>
+	</div>
+
+<div style="visibility: hidden; position: absolute; top: 0px;">S</div></body></html>
