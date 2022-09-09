@@ -11,6 +11,7 @@ use App\Models\Material;
 use App\Models\Menu;
 use App\Models\Message;
 use App\Models\Setting;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use MongoDB\Driver\Session;
@@ -45,16 +46,32 @@ class HomeController extends Controller
         ];
         return view('home.index', $data);
     }
-    public function cut()
+    public function cut(Request $request)
     {
         $menu = Menu::where('parent_id', '=', 0)->where('slug', '=', 'home')->where('status', '=', 'True')->first();
         $setting = Setting::first();
         $slider = Content::where('type', '=', 'Slider')->where('menu_id', '=', $menu->id)->where('status', '=', 'True')->get();
         $materials = Material::all();
+        $editData = null;
+
+        $id = $request->query('id') ? $request->query('id') - 1 : 0;
+        $titles = [
+            '箱曲げ (0-01)', '1角曲げ (1-01)', '1角曲げ (1-02)', '2角曲げ (2-01)', '2角曲げ (2-02)', '2角曲げ (2-03)',
+            '3角曲げ (3-01)', '4角曲げ (4-01)', '4角曲げ (4-02)', '4角曲げ (4-03)', '金属板 (金属板)', '金属板 (パンチング)',
+        ];
+        // if ($request->ajax()) {
+            $editData = $request->input('editData');
+            // return view('home.cut', $data);
+        // }else {
+        //     $editData = null;
+        // }
         $data = [
             'setting' => $setting,
             'slider' => $slider,
+            'title' => $titles[$id],
+            'details_image' => $id == 11 ? 'cut_details_'.($id + 1).'.png' : 'cut_details_'.($id + 1).'.gif',
             'materials' => $materials,
+            'editData' => $editData
         ];
         return view('home.cut', $data);
     }
@@ -161,25 +178,127 @@ class HomeController extends Controller
         return view('home.guide', $data);
     }
 
+    //Estimate price
     public function estimate(Request $request)
     {
-        //save estimate data to localstorage
-            // array_push($this->estimateData, $request->input('data'));
+        $requestData = $request->input('data');
+        if ($request->session()->exists('estimate')) {
+            $estimate = $request->session()->get('estimate');
+        }else{
+            $request->session()->put('estimate', array());
+            $estimate = Array();
+        }
+        // $request->session()->forget('estimate');
+        // $estimate = $request->session()->get('estimate');
+
+            array_push($estimate, $requestData);
+            $estimate = array_filter($estimate, static function($var){return $var !== null;});
+            $request->session()->put('estimate', $estimate);
             $menu = Menu::where('parent_id', '=', 0)->where('slug', '=', 'home')->where('status', '=', 'True')->first();
             $setting = Setting::first();
             $slider = Content::where('type', '=', 'Slider')->where('menu_id', '=', $menu->id)->where('status', '=', 'True')->get();
+            $materials = Material::all();
+            $colors = Color::all();
+            
             $data = [
                 'menu' => $menu,
                 'setting' => $setting,
                 'slider' => $slider,
-                // 'estimate' => $this->estimateData,
+                'estimate' => $estimate,
+                'materials'=> $materials,
+            'colors' => $colors
+
             ];
             if($request->ajax()) {
-            return json_encode(['status' => true]);
+                return json_encode(['status' => true]);
             }else {
+                // return print_r($estimate);
                 return view('home.estimate', $data);
             }
     }
+
+    //Delete Estimate for order
+    public function deleteEstimate(Request $request){
+        $id = $request->input('count');
+        $estimates = $request->session()->get('estimate');
+        unset($estimates[$id]); 
+        
+        $request->session()->put('estimate', $estimates);
+        if($request->ajax()){
+            return json_encode(['estimates' => $estimates, 'id'=> $id]);
+        }
+        
+    }
+
+    //Check if user loing valid
+    public function userCheck(Request $request){
+        if ($request->session()->exists('user')) {
+            $user = $request->session()->get('user');
+        }else{
+            $user = null;
+        }
+        if($request->ajax()){
+            return json_encode(['user'=>$user]);
+        }
+    }
+
+    //got to order list
+    public function orderList(Request $request){
+        function random_strings($length_of_string)
+        {
+            // String of all alphanumeric character
+            $str_result = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            // Shuffle the $str_result and returns substring
+            // of specified length
+            return substr(str_shuffle($str_result),
+                            0, $length_of_string);
+        }
+        $menu = Menu::where('parent_id', '=', 0)->where('slug', '=', 'home')->where('status', '=', 'True')->first();
+        $setting = Setting::first();
+        $slider = Content::where('type', '=', 'Slider')->where('menu_id', '=', $menu->id)->where('status', '=', 'True')->get();
+        $materials = Material::all();
+        $colors = Color::all();
+        if ($request->session()->exists('estimate')) {
+            $orderData = array_filter($request->session()->get('estimate'));
+            $order_id = random_strings(10);
+            $user = Auth::user();
+    
+            //save the orderdata into order table
+            foreach ($orderData as $key => $item) {
+                $order = new Order;
+                // $order->user_id = isset($user['id']) ? $user['id'] : 1;
+                $order->product_name = isset($item['product_name']) ? $item['product_name'] : null;
+                $order->material_id = isset($item['material_id']) ? $item['material_id'] : null;
+                $order->color_id = isset($item['color_id']) ? $item['color_id'] : null;
+                $order->thickness = isset($item['thickness']) ? $item['thickness'] : null;
+                $order->length = isset($item['length']) ? $item['length'] : null;
+                $order->unit_price = isset($item['unit_price']) ? $item['unit_price'] : null;
+                $order->length = isset($item['length']) ? $item['length'] : null;
+                $order->radius = isset($item['radius']) ? $item['radius'] : null;
+                $order->surface = isset($item['surface']) ? $item['surface'] : null;
+                $order->quantity = isset($item['quantity']) ? $item['quantity'] : null;
+                $order->gross_weight = isset($item['gross_weight']) ? $item['gross_weight'] : null;
+                $order->amount = isset($item['amount']) ? $item['amount'] : null;
+                $order->orderid =  $order_id;
+                $order->save();
+            };
+        }else {
+            $latestOrder = Order::where('user_id', '=', 5)->latest('created_at')->first();
+            // echo var_dump($latestOrder['orderid']);
+            $orderData = Order::where('orderid', '=', $latestOrder['orderid'])->get();
+        }
+        $data = [
+            'menu' => $menu,
+            'setting' => $setting,
+            'slider' => $slider,
+            'materials'=> $materials,
+            'orderData' => $orderData,
+            'colors' => $colors
+        ];
+        $request->session()->forget('estimate');
+        return view('home.order', $data);
+    }
+
     public function flow()
     {
         $menu = Menu::where('parent_id', '=', 0)->where('slug', '=', 'home')->where('status', '=', 'True')->first();

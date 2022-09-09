@@ -24,63 +24,63 @@
     <div class="metal-list-box-body">
         <div class="row justify-content-center">
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=1">
                     <img src="{{ asset('assets/images/side_0-1.gif')}}" alt="0-01">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=2">
                     <img src="{{ asset('assets/images/side_1-1.gif')}}" alt="1-01"></a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=3">
                     <img src="{{ asset('assets/images/side_1-2.gif')}}" alt="1-02">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=4">
                     <img src="{{ asset('assets/images/side_2-1.gif')}}" alt="2-01">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=5">
                     <img src="{{ asset('assets/images/side_2-2.gif')}}" alt="2-02">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=6">
                     <img src="{{ asset('assets/images/side_2-3.gif')}}" alt="2-03">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=7">
                     <img src="{{ asset('assets/images/side_3-1.gif')}}" alt="3-01">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=8">
                     <img src="{{ asset('assets/images/side_4-1.gif')}}" alt="4-01">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=9">
                     <img src="{{ asset('assets/images/side_4-2.gif')}}" alt="4-02">
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=10">
                     <img src="{{ asset('assets/images/side_4-3.gif')}}" alt="4-03">
                 </a>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-5 pb-1">
-                <a href="{{ route('cut') }}">
+                <a href="/cut?id=11">
                     <img src="{{ asset('assets/images/side_bend_ita.gif')}}" alt="金属板" width="105" height="60" />
                 </a>
             </div>
             <div class="col-5 pb-1">
-                <a href="">
+                <a href="/cut?id=12">
                     <img src="{{ asset('assets/images/side_bend_pan.gif')}}" alt="パンチング" width="105" height="60" />
                 </a>
             </div>

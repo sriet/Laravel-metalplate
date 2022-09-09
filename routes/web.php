@@ -31,6 +31,7 @@ Route::get('/welcome', function () {
 
 Route::get('/', [HomeController::class, 'index']);
 
+Route::get('/usercheck', [HomeController::class, 'userCheck'])->name('usercheck');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/movie', [MovieController::class, 'index'])->name('movie');
 Route::get('/aboutus', [HomeController::class, 'aboutus'])->name('aboutus');
@@ -49,10 +50,12 @@ Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/cut', [HomeController::class, 'cut'])->name('cut');
 Route::get('/getcolor', [HomeController::class, 'getcolor'])->name('getcolor');
 Route::get('/getthick', [HomeController::class, 'getthick'])->name('getthick');
+Route::get('/order_list', [HomeController::class, 'orderList'])->name('orderList');
 
 Route::post('/sendmessage', [HomeController::class, 'sendmessage'])->name('sendmessage');
 Route::get('/estimate', [HomeController::class, 'estimate'])->name('estimate');
 Route::post('/estimate', [HomeController::class, 'estimate'])->name('estimate');
+Route::post('/deleteestimate', [HomeController::class, 'deleteEstimate'])->name('deleteEstimate');
 
 Route::get('/content/{id}/{slug}', [HomeController::class, 'content'])->name('content');
 Route::get('/menucontent/{id}/{slug}', [HomeController::class, 'menucontent'])->name('menucontent');

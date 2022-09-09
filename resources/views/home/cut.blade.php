@@ -46,6 +46,9 @@ table#calcTable tr td.sizeTD {
 <script>
 $(document).ready(function() {
 
+    var unit_price = 0;
+    var quantity = 1;
+    var weight = 0;
     $('#select_material_id').on('change', function() {
         var material_id = $(this).val();
         var url = "{{url('getcolor')}}";
@@ -61,6 +64,7 @@ $(document).ready(function() {
         } else {
             $('#select_color_id').html('<option value="">Select 材料</option>');
         }
+        $('span[name="gross_weight"]').text(weight);
     });
     $('#select_color_id').on('change', function() {
         var color_id = $(this).val();
@@ -89,7 +93,14 @@ $(document).ready(function() {
         } else {
             $('#select_thick').html('<option value="">Select 材料</option>');
         }
+        $('span[name="gross_weight"]').text(weight);
     });
+    $('#count_number').change(() => {
+        quantity = Number($('#count_number').val())
+        $('#calcValue').text(quantity * unit_price);
+        weight = Number($("#select_material_id option:selected").data('gravity')) * quantity
+        $('span[name="gross_weight"]').text(weight);
+    })
     $(".calcCondition").on('change', function() {
         var valA = $("#size_a").val() * 1;
         var valB = $("#size_b").val() * 1;
@@ -97,9 +108,12 @@ $(document).ready(function() {
         var gravity = $("#select_material_id option:selected").data('gravity');
         var price_weight = $("#select_thick option:selected").data('weight');
 
-        var clacVal = valA * valB * thick * gravity * price_weight / 1000000;
-        console.log(valA, valB, thick, gravity, price_weight);
-        $("#calcValue").text(Math.ceil(clacVal) * 1);
+        unit_price = Math.ceil(valA * valB * thick * gravity * price_weight / 100000);
+        console.log(valA, valB, thick, gravity, price_weight, unit_price);
+        $("#calcValue").text(unit_price * quantity);
+        weight = Number(gravity) * quantity
+        console.log(weight)
+        $('span[name="gross_weight"]').text(weight);
     });
     $('#goto_estimate').on('click', () => {
         $.ajaxSetup({
@@ -109,18 +123,29 @@ $(document).ready(function() {
         });
         console.log('dd')
         let data = {}
+        data['product_name'] = $(".product-name").text()
         data['material_id'] = $('#select_material_id').val()
         data['color_id'] = $('#select_color_id').val()
         data['thickness'] = $('#select_thick').val()
-        data['unit_price'] = $("#select_thick option:selected").data('weight');
-        data['weight'] = $("#select_material_id option:selected").data('gravity');
-        data['quantity'] = $('#count_number').val()
-        data['gross_weight'] = Number(data['weight']) * Number(data['quantity'])
+        data['length'] = $('#size_a').val() + '/' + $('#size_b').val() + '/' + $('#size_c').val() +
+            '/' + $('#size_d').val() + '/' + $('#size_e').val() + '/' + $('#size_len').val() + '/' + $(
+                '#size_f').val() + '/' + $('#size_g').val() + '/' + $('#size_h').val() + '/' + $(
+                '#size_i').val() + '/' + $('#size_j').val();
+        data['unit_price'] = unit_price;
+        data['surface'] = $('.form-check input:radio:checked').val();
+        data['radius'] = $('#angleRCheckbox:checked').is(':checked') ? $('#radius').val() : '';
+        data['quantity'] = quantity;
+        data['gross_weight'] = Number($("#select_material_id option:selected").data('gravity')) *
+            quantity
+        data['amount'] = unit_price * quantity;
+        console.log(data)
         let url = "{{url('estimate')}}";
         $.ajax({
             type: 'POST',
             url: url,
-            data: data,
+            data: {
+                data
+            },
             dataType: 'json',
             success: function(response) {
                 console.log(response)
@@ -208,11 +233,11 @@ $(document).ready(function() {
                                                     <div class="tab-pane active" role="tabpanel" id="step2">
                                                         <div class="card">
                                                             <div class="card-header bg-secondary text-white">
-                                                                <h4>金属板 (金属板)</h4>
+                                                                <h4 class="product-name">{{$title}}</h4>
                                                             </div>
                                                             <div class="card-body">
                                                                 <img width="100%"
-                                                                    src="<?php echo $materials[0]->colors[0]->design; ?>" />
+                                                                    src="{{asset('assets/images/' . $details_image)}}" />
                                                             </div>
                                                         </div>
                                                         <div class="mt-3 d-flex justify-content-between">
@@ -487,7 +512,8 @@ $(document).ready(function() {
                                                                     <tr>
                                                                         <td class="col-6">総重量</th>
                                                                         <td class="col-6 text-right">
-                                                                            <span name="gross_weight">0kg</span>
+                                                                            <span
+                                                                                name="gross_weight"></span><span>kg</span>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>

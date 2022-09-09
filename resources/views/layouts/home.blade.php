@@ -40,6 +40,10 @@
         @include('home._footer')
     </div>
 
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v2/"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+
     <!-- Bootstrap core JavaScript -->
     <script src="{{ asset('assets')}}/vendor/jquery/jquery.min.js"></script>
     <script src="{{ asset('assets')}}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -51,6 +55,13 @@
     <script src="{{ asset('assets')}}/js/owl.carousel.min.js"></script>
     <script src="{{ asset('assets')}}/js/jquery.fancybox.min.js"></script>
     <script src="{{ asset('assets')}}/js/script.js"></script>
+    <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    </script>
     @yield('javascript')
 </body>
 
