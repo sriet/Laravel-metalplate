@@ -5,6 +5,15 @@
 @section('keywords', $setting->keywords)
 
 @section('css')
+<style>
+.estimate-edit:focus {
+    outline: none;
+}
+
+.estimate-edit:hover {
+    cursor: pointer;
+}
+</style>
 @endsection
 
 @section('javascript')
@@ -12,7 +21,7 @@
 var materials = <?= $materials; ?>;
 var colors = <?= $colors; ?>;
 var estimate = @json($estimate);
-console.log(estimate)
+var user = @json($user);
 
 //Stripe api key
 var stripe = Stripe(
@@ -28,23 +37,13 @@ var price = {}
 var customer = ''
 var total_price = 0;
 
-
 //Got to cut page to edit 
-// const editEstimate = (key) => {
-//     console.log(estimate[key])
-//     $.ajax({
-//         type: 'GET',
-//         url: '/cut',
-//         data: {
-//             data: estimate[key]
-//         },
-//         dataType: 'json',
-//         success: function(response) {
-//             console.log(response)
-
-//         }
-//     });
-// }
+const editEstimate = (key) => {
+    console.log(estimate[key])
+    var uri =
+        `/cut?id=${estimate[key].product.id}&key=${key}&data=${encodeURIComponent(JSON.stringify(estimate[key]))}`;
+    window.location.href = uri;
+}
 
 //Delete estimate
 const deleteEstimate = (key) => {
@@ -74,64 +73,55 @@ $('.estimate-pay').click(() => {
         return;
     alert('本当にお支払いを開始しますか？')
 
+    if (user.email) {
+        // get customer
+        let data = {
+            email: user.email
+        }
+        $.ajax({
+            type: "GET",
+            headers: headerParams,
+            url: "https://api.stripe.com/v1/customers",
+            data: data,
+            success: function(response) {
+                console.log(response);
 
-    //Test if user session exsist
-    $.ajax({
-        type: 'get',
-        url: '/usercheck',
-        dataType: 'json',
-        success: function(response) {
-            // if (response.user) {
-            let data = {
-                email: 'eeeqq@gmail.com'
-            }
-            //get customer
-            $.ajax({
-                type: "GET",
-                headers: headerParams,
-                url: "https://api.stripe.com/v1/customers",
-                data: data,
-                success: function(response) {
-                    console.log(response);
+                if (response.data.length == 0) {
+                    $.ajax({
+                        type: "POST",
+                        headers: headerParams,
+                        url: "https://api.stripe.com/v1/customers",
+                        data: data,
+                        success: function(response) {
+                            console.log("update Customer>>>>>>>>0",
+                                response);
+                            customer = response;
+                            stripeResponseHandler();
+                        }
+                    });
+                } else {
 
-                    if (response.data.length == 0) {
-                        $.ajax({
-                            type: "POST",
-                            headers: headerParams,
-                            url: "https://api.stripe.com/v1/customers",
-                            data: data,
-                            success: function(response) {
-                                console.log("update Customer>>>>>>>>0",
-                                    response);
-                                customer = response;
-                                stripeResponseHandler();
-                            }
-                        });
-                    } else {
-
-                        $.ajax({
-                            type: "POST",
-                            headers: headerParams,
-                            url: "https://api.stripe.com/v1/customers/" +
-                                response.data[0].id,
-                            data: data,
-                            success: function(response) {
-                                console.log("update customer>>>>>>>>1",
-                                    response);
-                                customer = response;
-                                stripeResponseHandler();
-                            }
-                        });
-
-                    }
+                    $.ajax({
+                        type: "POST",
+                        headers: headerParams,
+                        url: "https://api.stripe.com/v1/customers/" +
+                            response.data[0].id,
+                        data: data,
+                        success: function(response) {
+                            console.log("update customer>>>>>>>>1",
+                                response);
+                            customer = response;
+                            stripeResponseHandler();
+                        }
+                    });
 
                 }
-            });
-            // } else {
-            //     window.location.href = '/login'
-            // }
-        }
-    })
+
+            }
+        });
+    } else {
+        window.location.href = '/login'
+    }
 })
 
 const stripeResponseHandler = () => {
@@ -153,7 +143,7 @@ const stripeResponseHandler = () => {
         allow_promotion_codes: false,
         billing_address_collection: "required",
 
-        success_url: 'http://localhost:8000/order_list',
+        success_url: 'http://localhost:8000/order_list?success=true',
         cancel_url: 'http://localhost:8000/estimate',
     }
     $.ajax({
@@ -186,7 +176,7 @@ const drawList = (estimate) => {
             const colorInd = colors.findIndex(item => item.id === Number(element.color_id))
             console.log(materialInd, element.material_id)
             html += `<div class="bendEstimateItem">
-                                    <h4>板曲げ</h4>
+                                    <h4>${element.product.produt_name}</h4>
                                     <div class="bendEstimateIn">
                                         <table class="bendEstimateListTbl">
                                             <tbody>
@@ -232,11 +222,9 @@ const drawList = (estimate) => {
                                                 </tr>
                                             </tbody>
                                         </table>
-                                       <form method="get" enctype="multipart/form-data">
-                                        <button type="submit" class="txtAR mB5 border-0 estimate-edit border-none float-right" name="${count}" ><img
+                                        <button class="txtAR mB5 border-0 estimate-edit border-none float-right" onclick="editEstimate(${key})" name="${count}" ><img
                                                     src="https://www.itamage.com/themes/itamage/bend/img/btn_edit_bend.gif"
                                                     alt="寸法を編集" width="120" height="32" class="inputimage"></button>
-                                       </form>
 
                                         <form action="attachment.html" method="post">
                                             <div class="txtAR">
@@ -252,8 +240,9 @@ const drawList = (estimate) => {
         }
     }
     $('#total').text(total_price);
-    // // $('#shipping').text(1000);
-    $('#tax').text(Math.ceil(total_price * 0.1));
+    let shipping_price = 1000;
+    $('#shipping_price').text(shipping_price);
+    $('#tax').text(Math.ceil((total_price + shipping_price) * 0.1));
     $('#grand').text(Math.ceil(total_price * 1.1));
 
     $('.estimate-list').append(html);
@@ -370,34 +359,32 @@ $(document).ready(function() {
                                                 <span>【発送予定】</span><br>14:00までの決済・振込確認を含む<br>4営業日後に発送<br>支払い方法を代引きにした場合、1営業日加算されます。
                                             </th>
                                             <td class="border">
-                                                <dl id="subtotal">
+                                                <dl>
                                                     <dt>製品合計（税別）</dt>
-                                                    <dd id="total">4,000<span>円</span></dd>
+                                                    <dd><span id="total"></span><span>円</span></dd>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="border">
+                                                <dl>
+                                                    <dt>運賃・梱包費（税別）</dt>
+                                                    <dd><span id="shipping_price"></span><span>円</span></dd>
                                                 </dl>
                                             </td>
                                         </tr>
-
-                                        <!-- <tr>
-                                            <td class="border">
-                                                <dl id="postage">
-                                                    <dt>運賃・梱包費（税別）</dt>
-                                                    <dd id="shipping">0<span>円</span></dd>
-                                                </dl>
-                                            </td>
-                                        </tr> -->
                                         <tr>
                                             <td class="border">
-                                                <dl id="">
+                                                <dl>
                                                     <dt>消費税</dt>
-                                                    <dd id="tax">400<span>円</span></dd>
+                                                    <dd><span id="tax"></span><span>円</span></dd>
                                                 </dl>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <dl id=" total">
+                                                <dl id="total">
                                                     <dt>総合計</dt>
-                                                    <dd id="grand">4,400<span>円</span></dd>
+                                                    <dd><span id="grand"></span><span>円</span></dd>
                                                 </dl>
                                             </td>
                                         </tr>

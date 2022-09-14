@@ -49,6 +49,43 @@ $(document).ready(function() {
     var unit_price = 0;
     var quantity = 1;
     var weight = 0;
+    var product = @json($product);
+    var editData = @json($editData);
+    console.log(editData.product)
+    var key = editData.product ? <?= $key ?> : null;
+
+    //Edit data from Estimate page one item
+    if (editData.product) {
+        $(`#select_material_id option[value='${editData.material_id}']`).attr('selected', 'selected');
+        $(`#select_color_id option[value='${editData.color_id}']`).attr('selected', 'selected');
+        $(`#select_thick option[value='${editData.thickness}']`).attr('selected', 'selected');
+        $(`input[name=surface][value="${editData.surface}"]`).attr('checked', 'checked');
+        if (editData.radius) {
+            $('#angleRCheckbox').prop('checked', true)
+            $('#radius').val(editData.radius)
+        }
+        let lengths = editData.length.split('/');
+        $('#size_a').val(lengths[0]);
+        $('#size_b').val(lengths[1]);
+        $('#size_c').val(lengths[2]);
+        $('#size_d').val(lengths[3]);
+        $('#size_e').val(lengths[4]);
+        $('#size_len').val(lengths[5]);
+        $('#size_f').val(lengths[6]);
+        $('#size_g').val(lengths[7]);
+        $('#size_h').val(lengths[8]);
+        $('#size_i').val(lengths[9]);
+        $('#size_j').val(lengths[10]);
+        $(`#count_number option[value='${editData.quantity}']`).attr('selected', 'selected');
+        $('#calcValue').text(editData.amount);
+        $(`span[name='gross_weight']`).text(editData.gross_weight);
+        weight = editData.gross_weight;
+        quantity = editData.quantity;
+        unit_price = editData.unit_price;
+
+    }
+
+    //Select material item
     $('#select_material_id').on('change', function() {
         var material_id = $(this).val();
         var url = "{{url('getcolor')}}";
@@ -66,6 +103,8 @@ $(document).ready(function() {
         }
         $('span[name="gross_weight"]').text(weight);
     });
+
+    //Select color item
     $('#select_color_id').on('change', function() {
         var color_id = $(this).val();
         var url = "{{url('getthick')}}";
@@ -95,12 +134,16 @@ $(document).ready(function() {
         }
         $('span[name="gross_weight"]').text(weight);
     });
+
+    //Select quantity of product
     $('#count_number').change(() => {
         quantity = Number($('#count_number').val())
         $('#calcValue').text(quantity * unit_price);
         weight = Number($("#select_material_id option:selected").data('gravity')) * quantity
         $('span[name="gross_weight"]').text(weight);
     })
+
+    //Calculate the price when change the size of product
     $(".calcCondition").on('change', function() {
         var valA = $("#size_a").val() * 1;
         var valB = $("#size_b").val() * 1;
@@ -108,13 +151,15 @@ $(document).ready(function() {
         var gravity = $("#select_material_id option:selected").data('gravity');
         var price_weight = $("#select_thick option:selected").data('weight');
 
-        unit_price = Math.ceil(valA * valB * thick * gravity * price_weight / 100000);
+        unit_price = Math.ceil(valA * valB * thick * gravity * price_weight / 1000000);
         console.log(valA, valB, thick, gravity, price_weight, unit_price);
         $("#calcValue").text(unit_price * quantity);
         weight = Number(gravity) * quantity
         console.log(weight)
         $('span[name="gross_weight"]').text(weight);
     });
+
+    //Send all data to estimate order page
     $('#goto_estimate').on('click', () => {
         $.ajaxSetup({
             headers: {
@@ -123,7 +168,7 @@ $(document).ready(function() {
         });
         console.log('dd')
         let data = {}
-        data['product_name'] = $(".product-name").text()
+        data['product'] = product;
         data['material_id'] = $('#select_material_id').val()
         data['color_id'] = $('#select_color_id').val()
         data['thickness'] = $('#select_thick').val()
@@ -132,12 +177,16 @@ $(document).ready(function() {
                 '#size_f').val() + '/' + $('#size_g').val() + '/' + $('#size_h').val() + '/' + $(
                 '#size_i').val() + '/' + $('#size_j').val();
         data['unit_price'] = unit_price;
+        data['weight'] = $("#select_material_id option:selected").data('gravity');
         data['surface'] = $('.form-check input:radio:checked').val();
         data['radius'] = $('#angleRCheckbox:checked').is(':checked') ? $('#radius').val() : '';
         data['quantity'] = quantity;
         data['gross_weight'] = Number($("#select_material_id option:selected").data('gravity')) *
             quantity
         data['amount'] = unit_price * quantity;
+        if (key) {
+            data['key'] = key
+        }
         console.log(data)
         let url = "{{url('estimate')}}";
         $.ajax({
@@ -154,6 +203,7 @@ $(document).ready(function() {
             }
         });
     })
+
 });
 </script>
 @endsection
@@ -233,7 +283,8 @@ $(document).ready(function() {
                                                     <div class="tab-pane active" role="tabpanel" id="step2">
                                                         <div class="card">
                                                             <div class="card-header bg-secondary text-white">
-                                                                <h4 class="product-name">{{$title}}</h4>
+                                                                <h4 class="product-name">{{$product['produt_name']}}
+                                                                </h4>
                                                             </div>
                                                             <div class="card-body">
                                                                 <img width="100%"
@@ -249,14 +300,14 @@ $(document).ready(function() {
                                                                             <td class="col-9" colspan="6">
                                                                                 <select
                                                                                     class="form-control calcCondition"
-                                                                                    id="select_material_id" name="material_id>
-                                                                                        @foreach($materials as
-                                                                                        $material)
-                                                                                        <option
-                                                                                            data-gravity="
+                                                                                    id="select_material_id"
+                                                                                    name="material_id" value="3">
+                                                                                    @foreach($materials as
+                                                                                    $material)
+                                                                                    <option data-gravity="
                                                                                     {{$material->gravity}}"
-                                                                                    value="{{$material->id}}">
-                                                                                    {{$material->material}}
+                                                                                        value="{{$material->id}}">
+                                                                                        {{$material->material}}
                                                                                     </option>
                                                                                     @endforeach
                                                                                 </select>
@@ -519,7 +570,7 @@ $(document).ready(function() {
                                                                     <tr>
                                                                         <td class="col-6">製品金額（税別）</th>
                                                                         <td class="col-6 text-right">
-                                                                            <h5><span id="calcValue"></span>0円
+                                                                            <h5><span id="calcValue"></span>円
                                                                             </h5>
                                                                         </td>
                                                                     </tr>

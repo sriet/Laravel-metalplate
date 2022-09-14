@@ -17,6 +17,7 @@ var orderData = @json($orderData);
 $(document).ready(function() {
     var html = ``;
     var count = 0
+    var total_price = 0
     for (const key in orderData) {
         if (orderData.hasOwnProperty.call(orderData, key)) {
             const element = orderData[key];
@@ -25,80 +26,53 @@ $(document).ready(function() {
             const colorInd = colors.findIndex(item => item.id === Number(element.color_id))
             console.log(materialInd, element.material_id)
             html += `<div class="bendEstimateItem">
-                                    <h4>板曲げ</h4>
-                                    <div class="bendEstimateIn">
-                                        <table class="bendEstimateListTbl">
-                                            <tbody>
-                                                <tr>
-                                                    <th class="no">No.</th>
-                                                    <th class="code">品名</th>
-                                                    <th>材料・色</th>
-                                                    <th>板厚</th>
-                                                    <th class="nagasa">長さ</th>
-                                                    <th class="tanka">単価</th>
-                                                    <th class="price">重量</th>
-                                                    <th class="num">数量</th>
-                                                    <th class="">&nbsp;</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>${count}</td>
-                                                    <td>金属板</td>
-                                                    <td>${materials[materialInd].material} ${colors[colorInd].color}</td>
-                                                    <td>T=${element.thickness}mm</td>
-                                                    <td>-</td>
-                                                    <td>${element.unit_price}円</td>
-                                                    <td>${element.weight}kg</td>
-                                                    <td><select name="item_0">
-                                                            <option value="1" selected="selected">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
-                                                            <option value="5">5</option>
-                                                            <option value="6">6</option>
-                                                            <option value="7">7</option>
-                                                            <option value="8">8</option>
-                                                            <option value="9">9</option>
-                                                            <option value="10">10</option>
-                                                            <option value="11">11</option>
-                                                            <option value="12">12</option>
-                                                            <option value="13">13</option>
-                                                            <option value="14">14</option>
-                                                            <option value="15">15</option>
-                                                            <option value="16">16</option>
-                                                            <option value="17">17</option>
-                                                            <option value="18">18</option>
-                                                            <option value="19">19</option>
-                                                            <option value="20">20</option>
-                                                        </select> 個</td>
-                                                    <td>
-                                                        <form method="post" action="">
-                                                            <button class="inputimage estimate-delete"
-                                                                value="${count}"
-                                                                onclick="deleteEstimate(${count})"
-                                                                name="delete_item" type="submit">
-                                                                <img src="https://www.itamage.com/themes/itamage/bend/img/btn_del.gif"
-                                                                    alt="" width="40" height="25">
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="bendEstimateTotalTbl">
-                                            <tbody>
-                                                <tr>
-                                                    <th>総重量</th>
-                                                    <td>${element.gross_weight}kg</td>
-                                                    <th>金額(税別)</th>
-                                                    <td>${element.amount}円</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-                                </div>`
+                <h4>${element.product.product_name}</h4>
+                <div class="bendEstimateIn">
+                    <table class="bendEstimateListTbl">
+                        <tbody>
+                            <tr>
+                                <th class="no">No.</th>
+                                <th class="code">品名</th>
+                                <th>材料・色</th>
+                                <th>板厚</th>
+                                <th class="nagasa">長さ</th>
+                                <th class="tanka">単価</th>
+                                <th class="price">重量</th>
+                                <th class="num">数量</th>
+                            </tr>
+                            <tr>
+                                <td>${count}</td>
+                                <td>金属板</td>
+                                <td>${materials[materialInd].material} ${colors[colorInd].color}</td>
+                                <td>T=${element.thickness}mm</td>
+                                <td>-</td>
+                                <td>${element.unit_price}円</td>
+                                <td>${element.weight}kg</td>
+                                <td>${element.quantity} 個</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="bendEstimateTotalTbl">
+                        <tbody>
+                            <tr>
+                                <th>総重量</th>
+                                <td>${element.gross_weight}kg</td>
+                                <th>金額(税別)</th>
+                                <td>${element.amount}円</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>`
+            total_price += Number(element.amount)
         }
     }
+    $('#total').text(total_price);
+    let shipping_price = 1000;
+    $('#shipping_price').text(shipping_price);
+    $('#tax').text(Math.ceil((total_price + shipping_price) * 0.1));
+    $('#grand').text(Math.ceil(total_price * 1.1));
+
 
     $('.estimate-list').append(html);
 });
@@ -191,41 +165,32 @@ $(document).ready(function() {
                                     <tbody>
                                         <tr>
                                             <td class="border">
-                                                <dl id="postage">
+                                                <dl>
                                                     <dt>製品合計（税別）</dt>
-                                                    <dd>4000円</dd>
-                                                </dl>
+                                                    <dd><span id="total"></span><span>円</span></dd>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="border">
-                                                <dl id="tax">
-                                                    <dt>代引手数料（税別）</dt>
-                                                    <dd>400円</dd>
-                                                </dl>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border">
-                                                <dl id="tax">
+                                                <dl>
                                                     <dt>運賃・梱包費（税別）</dt>
-                                                    <dd>400円</dd>
+                                                    <dd><span id="shipping_price"></span><span>円</span></dd>
                                                 </dl>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="border">
-                                                <dl id="tax">
+                                                <dl>
                                                     <dt>消費税</dt>
-                                                    <dd>400円</dd>
+                                                    <dd><span id="tax"></span><span>円</span></dd>
                                                 </dl>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="border">
-                                                <dl id="tax">
+                                            <td>
+                                                <dl id="total">
                                                     <dt>総合計</dt>
-                                                    <dd>400円</dd>
+                                                    <dd><span id="grand"></span><span>円</span></dd>
                                                 </dl>
                                             </td>
                                         </tr>

@@ -12,6 +12,7 @@ use App\Models\Menu;
 use App\Models\Message;
 use App\Models\Setting;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use MongoDB\Driver\Session;
@@ -52,26 +53,22 @@ class HomeController extends Controller
         $setting = Setting::first();
         $slider = Content::where('type', '=', 'Slider')->where('menu_id', '=', $menu->id)->where('status', '=', 'True')->get();
         $materials = Material::all();
-        $editData = null;
+        $products = Product::all();
 
         $id = $request->query('id') ? $request->query('id') - 1 : 0;
-        $titles = [
-            '箱曲げ (0-01)', '1角曲げ (1-01)', '1角曲げ (1-02)', '2角曲げ (2-01)', '2角曲げ (2-02)', '2角曲げ (2-03)',
-            '3角曲げ (3-01)', '4角曲げ (4-01)', '4角曲げ (4-02)', '4角曲げ (4-03)', '金属板 (金属板)', '金属板 (パンチング)',
-        ];
-        // if ($request->ajax()) {
-            $editData = $request->input('editData');
-            // return view('home.cut', $data);
-        // }else {
-        //     $editData = null;
-        // }
+    
+            $editData = $request->query('data') ? $request->query('data') : new \stdClass();
+            $key = $request->query('key') ? $request->query('key') : 0;
+        
         $data = [
             'setting' => $setting,
             'slider' => $slider,
-            'title' => $titles[$id],
+            // 'title' => $products[$id],
             'details_image' => $id == 11 ? 'cut_details_'.($id + 1).'.png' : 'cut_details_'.($id + 1).'.gif',
             'materials' => $materials,
-            'editData' => $editData
+            'editData' => $editData,
+            'product' => $products[$id],
+            'key' => $key
         ];
         return view('home.cut', $data);
     }
@@ -182,23 +179,29 @@ class HomeController extends Controller
     public function estimate(Request $request)
     {
         $requestData = $request->input('data');
-        if ($request->session()->exists('estimate')) {
+        if(isset($requestData['key'])){
             $estimate = $request->session()->get('estimate');
+            $estimate[$requestData['key']] = $requestData;
         }else{
-            $request->session()->put('estimate', array());
-            $estimate = Array();
+            if ($request->session()->exists('estimate')) {
+                $estimate = $request->session()->get('estimate');
+            }else{
+                $request->session()->put('estimate', array());
+                $estimate = Array();
+            }
+            array_push($estimate, $requestData);
+            $estimate = array_filter($estimate, static function($var){return $var !== null;});
         }
         // $request->session()->forget('estimate');
         // $estimate = $request->session()->get('estimate');
 
-            array_push($estimate, $requestData);
-            $estimate = array_filter($estimate, static function($var){return $var !== null;});
             $request->session()->put('estimate', $estimate);
             $menu = Menu::where('parent_id', '=', 0)->where('slug', '=', 'home')->where('status', '=', 'True')->first();
             $setting = Setting::first();
             $slider = Content::where('type', '=', 'Slider')->where('menu_id', '=', $menu->id)->where('status', '=', 'True')->get();
             $materials = Material::all();
             $colors = Color::all();
+            $user = Auth::user() ? Auth::user() : new \stdClass();
             
             $data = [
                 'menu' => $menu,
@@ -206,13 +209,12 @@ class HomeController extends Controller
                 'slider' => $slider,
                 'estimate' => $estimate,
                 'materials'=> $materials,
-            'colors' => $colors
-
+                'colors' => $colors,
+                'user' => $user
             ];
             if($request->ajax()) {
                 return json_encode(['status' => true]);
             }else {
-                // return print_r($estimate);
                 return view('home.estimate', $data);
             }
     }
@@ -258,7 +260,8 @@ class HomeController extends Controller
         $slider = Content::where('type', '=', 'Slider')->where('menu_id', '=', $menu->id)->where('status', '=', 'True')->get();
         $materials = Material::all();
         $colors = Color::all();
-        if ($request->session()->exists('estimate')) {
+        $success = $request->query('success');
+        if ($request->session()->exists('estimate') && $success) {
             $orderData = array_filter($request->session()->get('estimate'));
             $order_id = random_strings(10);
             $user = Auth::user();
@@ -266,8 +269,8 @@ class HomeController extends Controller
             //save the orderdata into order table
             foreach ($orderData as $key => $item) {
                 $order = new Order;
-                // $order->user_id = isset($user['id']) ? $user['id'] : 1;
-                $order->product_name = isset($item['product_name']) ? $item['product_name'] : null;
+                $order->user_id = $user['id'];
+                $order->product_id = isset($item['product']) ? $item['product']['id'] : null;
                 $order->material_id = isset($item['material_id']) ? $item['material_id'] : null;
                 $order->color_id = isset($item['color_id']) ? $item['color_id'] : null;
                 $order->thickness = isset($item['thickness']) ? $item['thickness'] : null;
@@ -283,7 +286,7 @@ class HomeController extends Controller
                 $order->save();
             };
         }else {
-            $latestOrder = Order::where('user_id', '=', 5)->latest('created_at')->first();
+            $latestOrder = Order::where('user_id', '=', $user['id'])->latest('created_at')->first();
             // echo var_dump($latestOrder['orderid']);
             $orderData = Order::where('orderid', '=', $latestOrder['orderid'])->get();
         }
